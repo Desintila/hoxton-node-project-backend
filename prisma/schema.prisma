@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  email          String           @unique
+  password       String
+  photo          String
+  post           Post[]
+  comments       Comments[]
+  post_likes     Post_Likes[]
+  comments_likes Comments_Likes[]
+  jobs           Jobs[]
+}
+
+model Post {
+  id          Int          @id @default(autoincrement())
+  user        User         @relation(fields: [userId], references: [id])
+  userId      Int
+  dateCreated String
+  text        String
+  comments    Comments[]
+  post_likes  Post_Likes[]
+}
+
+model Comments {
+  id             Int              @id @default(autoincrement())
+  user           User             @relation(fields: [userId], references: [id])
+  userId         Int
+  post           Post             @relation(fields: [postId], references: [id])
+  postId         Int
+  dateCreated    String
+  comments_likes Comments_Likes[]
+}
+
+model Post_Likes {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+}
+
+model Comments_Likes {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  comment    Comments @relation(fields: [commentsId], references: [id])
+  commentsId Int
+}
+
+model Company {
+  id          Int    @id @default(autoincrement())
+  name        String
+  photo       String
+  location    String
+  description String
+  jobs        Jobs[]
+}
+
+model Jobs {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  company     Company @relation(fields: [companyId], references: [id])
+  companyId   Int
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  location    String
+  dateCreated String
+  salary      Int
+}
