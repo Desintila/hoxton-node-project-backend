@@ -17,6 +17,17 @@ function createToken(id: number) {
 
 }
 
+async function getUserFromToken(token: string) {
+    //@ts-ignore
+    const decodedData = jwt.verify(token, process.env.MY_SECRET)
+    const user = await prisma.user.findUnique({
+        //@ts-ignore
+        where: { id: decodedData.id },
+        include: { post: true, comments: true, post_likes: true, comments_likes: true }
+    })
+    return user
+}
+
 app.post('/signup', async (req, res) => {
     const { firstName, lastName, email, password, photo } = req.body
 
@@ -32,6 +43,46 @@ app.post('/signup', async (req, res) => {
         res.status(400).send({ error: err.message })
     }
 })
+
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email: email },
+            include: { post: true, comments: true, post_likes: true, comments_likes: true }
+        })
+        // @ts-ignore
+        const passwordMatch = bcrypt.compareSync(password, user.password)
+
+        if (user && passwordMatch) {
+            res.send({ user, token: createToken(user.id) })
+        }
+        else {
+            throw Error('Something went wrong!')
+        }
+    }
+    catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: 'User or password invalid' })
+    }
+})
+
+
+app.get('/validate', async (req, res) => {
+    const token = req.headers.authorization || ''
+    try {
+        const user = await getUserFromToken(token)
+        res.send(user)
+    }
+    catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: 'Invalid Token' })
+    }
+})
+
+
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
