@@ -101,6 +101,12 @@ app.post('/post', async (req, res) => {
 })
 
 
+app.get('/companies', async (req, res) => {
+    const companies = await prisma.company.findMany()
+    res.send(companies)
+})
+
+
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
 })
