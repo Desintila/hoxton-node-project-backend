@@ -102,10 +102,32 @@ app.post('/post', async (req, res) => {
 
 
 app.get('/companies', async (req, res) => {
-    const companies = await prisma.company.findMany()
+    const companies = await prisma.company.findMany({ include: { jobs: true } })
     res.send(companies)
 })
 
+
+app.post('/comments', async (req, res) => {
+    const token = req.headers.authorization || ''
+    const { commentText, dateCreated, postId } = req.body
+    try {
+        const user = await getUserFromToken(token)
+        const comment = await prisma.comments.create({
+            // @ts-ignore
+            data: { commentText: commentText, dateCreated: dateCreated, userId: user.id, postId: postId }
+        })
+        res.send(comment)
+    }
+    catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
+    }
+})
+
+app.get('/jobs', async (req, res) => {
+    const jobs = await prisma.jobs.findMany({ include: { company: true, user: true } })
+    res.send(jobs)
+})
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')

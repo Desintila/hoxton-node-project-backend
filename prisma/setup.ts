@@ -47,9 +47,88 @@ const companies = [
     }
 ]
 
+
+const jobs = [
+    {
+        title: "Audit Finance",
+        description: "Auditues i brendshem i sitemeve financare",
+        companyId: 1,
+        location: "Tirane",
+        dateCreated: "21.03.2022",
+        salary: 600,
+        userId: 3
+    },
+    {
+        title: "Perfaqesues Shitje",
+        description: "Perfaqesues shitje dyqan Vodafone",
+        companyId: 2,
+        location: "Durres",
+        dateCreated: "05.03.2022",
+        salary: 400,
+        userId: 1
+    },
+    {
+        title: "Konsulent Imobiliar",
+        description: "Konsulent Imobiliar ne Vollga",
+        companyId: 3,
+        location: "Durres",
+        dateCreated: "15.03.2022",
+        salary: 450,
+        userId: 4
+    },
+    {
+        title: "Financiere",
+        description: "Financiere ne sektorin e shitjeve",
+        companyId: 4,
+        location: "Tirane",
+        dateCreated: "18.03.2022",
+        salary: 500,
+        userId: 3
+    },
+    {
+        title: "Reception",
+        description: "Front Desk",
+        companyId: 5,
+        location: "Durres",
+        dateCreated: "20.03.2022",
+        salary: 550,
+        userId: 1
+    },
+    {
+        title: "Grafik Design",
+        description: "Vend pune Grafik Design",
+        companyId: 6,
+        location: "Durres",
+        dateCreated: "10.03.2022",
+        salary: 700,
+        userId: 4
+    },
+    {
+        title: "Manager",
+        description: "Menaxher ne departamentin e shitjes",
+        companyId: 6,
+        location: "Durres",
+        dateCreated: "12.03.2022",
+        salary: 400,
+        userId: 3
+    },
+    {
+        title: "Kuzhinier",
+        description: "Kuzhiner tek 4 Stinet",
+        companyId: 7,
+        location: "Durres",
+        dateCreated: "14.03.2022",
+        salary: 550,
+        userId: 1
+    }
+]
+
 async function createStuff() {
     for (const company of companies) {
         await prisma.company.create({ data: company })
+    }
+    for (const job of jobs) {
+        await prisma.jobs.create({ data: job })
     }
 }
 

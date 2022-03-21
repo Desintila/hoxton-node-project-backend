@@ -41,7 +41,7 @@ model Comments {
   post           Post             @relation(fields: [postId], references: [id])
   postId         Int
   dateCreated    String
-  text           String
+  commentText    String
   comments_likes Comments_Likes[]
 }
 
