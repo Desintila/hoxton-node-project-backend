@@ -23,7 +23,7 @@ async function getUserFromToken(token: string) {
     const user = await prisma.user.findUnique({
         //@ts-ignore
         where: { id: decodedData.id },
-        include: { post: true, comments: true, post_likes: true, comments_likes: true }
+        include: { post: true, comments: true }
     })
     return user
 }
@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { email: email },
-            include: { post: true, comments: true, post_likes: true, comments_likes: true }
+            include: { post: true, comments: true }
         })
         // @ts-ignore
         const passwordMatch = bcrypt.compareSync(password, user.password)
@@ -84,13 +84,13 @@ app.get('/validate', async (req, res) => {
 
 
 app.post('/post', async (req, res) => {
-    const { text, dateCreated } = req.body
+    const { text, dateCreated, likes } = req.body
     const token = req.headers.authorization || ''
     try {
         const user = await getUserFromToken(token)
         const post = await prisma.post.create({
             // @ts-ignore
-            data: { text: text, dateCreated: dateCreated, userId: user.id }
+            data: { text: text, dateCreated: dateCreated, userId: user.id, likes: likes }
         })
         res.send(post)
     }
@@ -109,12 +109,12 @@ app.get('/companies', async (req, res) => {
 
 app.post('/comments', async (req, res) => {
     const token = req.headers.authorization || ''
-    const { commentText, dateCreated, postId } = req.body
+    const { commentText, dateCreated, postId, likes } = req.body
     try {
         const user = await getUserFromToken(token)
         const comment = await prisma.comments.create({
             // @ts-ignore
-            data: { commentText: commentText, dateCreated: dateCreated, userId: user.id, postId: postId }
+            data: { commentText: commentText, dateCreated: dateCreated, userId: user.id, postId: postId, likes: likes }
         })
         res.send(comment)
     }
