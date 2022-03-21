@@ -83,6 +83,23 @@ app.get('/validate', async (req, res) => {
 })
 
 
+app.post('/post', async (req, res) => {
+    const { text, dateCreated } = req.body
+    const token = req.headers.authorization || ''
+    try {
+        const user = await getUserFromToken(token)
+        const post = await prisma.post.create({
+            // @ts-ignore
+            data: { text: text, dateCreated: dateCreated, userId: user.id }
+        })
+        res.send(post)
+    }
+    catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
+    }
+})
+
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
