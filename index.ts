@@ -181,6 +181,34 @@ app.patch('/removeconnection', async (req, res) => {
 
 })
 
+app.patch('/likes', async (req, res) => {
+    const id = Number(req.body.id)
+    const token = req.headers.authorization || ''
+
+    try {
+
+        const user = await getUserFromToken(token)
+        if (!user) {
+            res.status(404).send({ error: 'You need to login before.' })
+        }
+        else {
+            const updatedPost = await prisma.post.update({
+                where: { id },
+                data: {
+                    likes:
+                        { increment: 1 }
+                }
+            })
+            res.send(updatedPost)
+        }
+
+
+    } catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
+    }
+
+})
 
 
 app.listen(4000, () => {
