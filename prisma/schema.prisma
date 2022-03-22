@@ -11,15 +11,17 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String     @unique
-  password  String
-  photo     String
-  post      Post[]
-  comments  Comments[]
-  jobs      Jobs[]
+  id         Int        @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  email      String     @unique
+  password   String
+  photo      String
+  post       Post[]
+  comments   Comments[]
+  jobs       Jobs[]
+  followedBy User[]     @relation("UserFollows", references: [id])
+  following  User[]     @relation("UserFollows", references: [id])
 }
 
 model Post {

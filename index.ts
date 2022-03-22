@@ -23,7 +23,7 @@ async function getUserFromToken(token: string) {
     const user = await prisma.user.findUnique({
         //@ts-ignore
         where: { id: decodedData.id },
-        include: { post: true, comments: true }
+        include: { post: true, comments: true, followedBy: true, following: true }
     })
     return user
 }
@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { email: email },
-            include: { post: true, comments: true }
+            include: { post: true, comments: true, followedBy: true, following: true }
         })
         // @ts-ignore
         const passwordMatch = bcrypt.compareSync(password, user.password)
@@ -128,6 +128,60 @@ app.get('/jobs', async (req, res) => {
     const jobs = await prisma.jobs.findMany({ include: { company: true, user: true } })
     res.send(jobs)
 })
+
+
+app.patch('/connect', async (req, res) => {
+    const token = req.headers.authorization || ''
+    const { connectionId } = req.body
+    try {
+        const user = await getUserFromToken(token)
+        const updatedUser = await prisma.user.update({
+            // @ts-ignore
+            where: { id: user.id }
+            , data: {
+                followedBy: {
+                    connect: {
+                        id: connectionId
+                    }
+                }
+            },
+            include: { post: true, comments: true, followedBy: true, following: true }
+        })
+        res.send(updatedUser)
+    } catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
+    }
+
+})
+
+app.patch('/removeconnection', async (req, res) => {
+    const token = req.headers.authorization || ''
+    const { connectionId } = req.body
+    try {
+        const user = await getUserFromToken(token)
+        const updatedUser = await prisma.user.update({
+            // @ts-ignore
+            where: { id: user.id }
+            , data: {
+                followedBy: {
+                    disconnect: {
+                        id: connectionId
+                    }
+                }
+            },
+            include: { post: true, comments: true, followedBy: true, following: true }
+        })
+        res.send(updatedUser)
+
+    } catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
+    }
+
+})
+
+
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
