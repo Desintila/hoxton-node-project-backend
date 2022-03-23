@@ -23,7 +23,7 @@ async function getUserFromToken(token: string) {
     const user = await prisma.user.findUnique({
         //@ts-ignore
         where: { id: decodedData.id },
-        include: { post: true, comments: true, followedBy: true, following: true }
+        include: { post: true, comments: true, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
     })
     return user
 }
@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { email: email },
-            include: { post: true, comments: true, followedBy: true, following: true }
+            include: { post: true, comments: true, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
         })
         // @ts-ignore
         const passwordMatch = bcrypt.compareSync(password, user.password)
