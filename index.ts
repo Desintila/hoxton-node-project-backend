@@ -181,8 +181,8 @@ app.patch('/removeconnection', async (req, res) => {
 
 })
 
-app.patch('/likes', async (req, res) => {
-    const id = Number(req.body.id)
+app.patch('/likes/:id', async (req, res) => {
+    const id = Number(req.params.id)
     const token = req.headers.authorization || ''
 
     try {
