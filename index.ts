@@ -210,6 +210,11 @@ app.patch('/likes', async (req, res) => {
 
 })
 
+app.get('/users', async (req, res) => {
+    const users = await prisma.user.findMany({ include: { post: true, comments: true, followedBy: true, following: true, jobs: true } })
+    res.send(users)
+})
+
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
