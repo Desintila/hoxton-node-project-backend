@@ -214,7 +214,46 @@ app.get('/users', async (req, res) => {
     const users = await prisma.user.findMany({ include: { post: true, comments: true, followedBy: true, following: true, jobs: true } })
     res.send(users)
 })
+app.get('/users/:id', async (req, res) => {
+    const id = Number(req.params.id)
+    try {
+        const user = await prisma.user.findFirst({
+            where: { id }, include: {
+                post: true, comments: true, followedBy: true, following: true
+            }
+        })
+        if (user) {
+            res.send(user)
+        }
+        else {
+            res.status(404).send({ error: 'User not found' })
+        }
+    } catch (error) {
+        //@ts-ignore
+        res.status(400).send({ error: error.message })
+    }
+})
 
+
+app.get('/companies/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+    try {
+        const company = await prisma.company.findFirst({
+            where: { id },
+            include: { jobs: true }
+        })
+        if (company) {
+            res.send(company)
+        }
+        else {
+            res.status(404).send({ error: 'Company not found' })
+        }
+    } catch (error) {
+        //@ts-ignore
+        res.status(400).send({ error: error.message })
+    }
+})
 
 app.listen(4000, () => {
     console.log('Server running: http://localhost:4000')
