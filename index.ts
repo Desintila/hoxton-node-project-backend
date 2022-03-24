@@ -139,7 +139,7 @@ app.patch('/connect', async (req, res) => {
             // @ts-ignore
             where: { id: user.id }
             , data: {
-                followedBy: {
+                following: {
                     connect: {
                         id: connectionId
                     }
@@ -164,7 +164,7 @@ app.patch('/removeconnection', async (req, res) => {
             // @ts-ignore
             where: { id: user.id }
             , data: {
-                followedBy: {
+                following: {
                     disconnect: {
                         id: connectionId
                     }
