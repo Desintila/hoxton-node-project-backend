@@ -11,17 +11,18 @@ datasource db {
 }
 
 model User {
-  id         Int        @id @default(autoincrement())
+  id         Int         @id @default(autoincrement())
   firstName  String
   lastName   String
-  email      String     @unique
+  email      String      @unique
   password   String
   photo      String
   post       Post[]
   comments   Comments[]
   jobs       Jobs[]
-  followedBy User[]     @relation("UserFollows", references: [id])
-  following  User[]     @relation("UserFollows", references: [id])
+  followedBy User[]      @relation("UserFollows", references: [id])
+  following  User[]      @relation("UserFollows", references: [id])
+  Education  Education[]
 }
 
 model Post {
@@ -65,4 +66,14 @@ model Jobs {
   location    String
   dateCreated String
   salary      Int
+}
+
+model Education {
+  id        Int    @id @default(autoincrement())
+  school    String
+  field     String
+  startYear Int
+  endYear   Int
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int
 }

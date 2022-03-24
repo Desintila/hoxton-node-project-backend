@@ -23,7 +23,7 @@ async function getUserFromToken(token: string) {
     const user = await prisma.user.findUnique({
         //@ts-ignore
         where: { id: decodedData.id },
-        include: { post: { include: { comments: true } }, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
+        include: { post: { include: { comments: true } }, Education: true, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
     })
     return user
 }
@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { email: email },
-            include: { post: { include: { comments: true } }, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
+            include: { post: { include: { comments: true } }, Education: true, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
         })
         // @ts-ignore
         const passwordMatch = bcrypt.compareSync(password, user.password)
@@ -252,6 +252,24 @@ app.get('/companies/:id', async (req, res) => {
     } catch (error) {
         //@ts-ignore
         res.status(400).send({ error: error.message })
+    }
+})
+
+
+app.post('/education', async (req, res) => {
+    const { school, field, startYear, endYear } = req.body
+    const token = req.headers.authorization || ''
+    try {
+        const user = await getUserFromToken(token)
+        const education = await prisma.education.create({
+            // @ts-ignore
+            data: { school: school, field: field, startYear: startYear, endYear: endYear, userId: user.id }
+        })
+        res.send(education)
+    }
+    catch (err) {
+        // @ts-ignore
+        res.status(400).send({ error: err.message })
     }
 })
 
