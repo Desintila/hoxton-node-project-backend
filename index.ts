@@ -197,7 +197,7 @@ app.patch('/likes/:id', async (req, res) => {
                 data: {
                     likes:
                         { increment: 1 }
-                }
+                }, include: { comments: true }
             })
             res.send(updatedPost)
         }
