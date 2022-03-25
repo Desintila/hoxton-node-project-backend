@@ -211,7 +211,7 @@ app.patch('/likes/:id', async (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-    const users = await prisma.user.findMany({ include: { post: true, comments: true, followedBy: true, following: true, jobs: true } })
+    const users = await prisma.user.findMany({ include: { post: true, comments: true, Education: true, followedBy: true, following: true, jobs: true } })
     res.send(users)
 })
 app.get('/users/:id', async (req, res) => {
@@ -219,7 +219,7 @@ app.get('/users/:id', async (req, res) => {
     try {
         const user = await prisma.user.findFirst({
             where: { id }, include: {
-                post: true, comments: true, followedBy: true, following: true
+                post: true, comments: true, followedBy: true, following: true, Education: true
             }
         })
         if (user) {
