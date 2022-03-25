@@ -23,7 +23,7 @@ async function getUserFromToken(token: string) {
     const user = await prisma.user.findUnique({
         //@ts-ignore
         where: { id: decodedData.id },
-        include: { post: { include: { comments: true } }, Education: true, followedBy: true, following: { include: { post: { include: { comments: true } } } } }
+        include: { post: { include: { comments: true } }, Education: true, followedBy: true, following: { include: { post: { include: { comments: true } }, Education: true } } }
     })
     return user
 }
